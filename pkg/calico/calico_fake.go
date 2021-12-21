@@ -7,21 +7,19 @@ import (
 	"os"
 )
 
-
-
 type ControllerFake struct {
 	GlobalNetworkSets map[string]*v3.GlobalNetworkSet
 }
 
-func (c *ControllerFake) GetNetworkSet(ctx context.Context,netName string)(*v3.GlobalNetworkSet,error){
+func (c *ControllerFake) GetNetworkSet(ctx context.Context, netName string) (*v3.GlobalNetworkSet, error) {
 	return c.GlobalNetworkSets[netName], nil
 }
 
-func (c *ControllerFake) UpdateNetworkSet(ctx context.Context, netName string, ipsAdd[]string ,
-	ipsDelete[]string,stop chan os.Signal)error {
+func (c *ControllerFake) UpdateNetworkSet(ctx context.Context, netName string, ipsAdd []string,
+	ipsDelete []string, stop chan os.Signal) error {
 
 	//Servers to add
-	if len(ipsAdd) > 0{
+	if len(ipsAdd) > 0 {
 		c.GlobalNetworkSets[netName].Spec.Nets = append(c.GlobalNetworkSets[netName].Spec.Nets, ipsAdd...)
 	}
 	//Servers to delete

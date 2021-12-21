@@ -10,14 +10,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sync"
 	"time"
-
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	//"sync"
 	//"time"
 )
 
 var (
-	logger 					 = log.LoggerFunction()
+	logger = log.LoggerFunction()
 )
 
 func init() {
@@ -25,16 +24,15 @@ func init() {
 }
 
 type SyncControllerFake struct {
-	calicoC calico.Controller
-	consulC consul.Controller
-	logger *logrus.Entry
-	consulChange 	map[string]int
-	serviceMap 		map[string][]*capi.CatalogService
+	calicoC         calico.Controller
+	consulC         consul.Controller
+	logger          *logrus.Entry
+	consulChange    map[string]int
+	serviceMap      map[string][]*capi.CatalogService
 	consulCalicoMap map[string]string
-	mapAction 		map[string]map[string]time.Time
-	mutexCache *sync.RWMutex
+	mapAction       map[string]map[string]time.Time
+	mutexCache      *sync.RWMutex
 }
-
 
 func NewFakeController(consulCalicoConf map[string]string) *SyncController {
 
@@ -45,7 +43,7 @@ func NewFakeController(consulCalicoConf map[string]string) *SyncController {
 	mutexCache := &sync.RWMutex{}
 
 	//Create mapping for consul service and calico globalNetworkSet
-	for k,v := range consulCalicoConf{
+	for k, v := range consulCalicoConf {
 		consulCalicoMap[k] = v
 		mapAction[k] = make(map[string]time.Time)
 	}
@@ -70,20 +68,19 @@ func NewFakeController(consulCalicoConf map[string]string) *SyncController {
 	}
 }
 
-func InitGlobalNetworkSet(c *SyncController,calicoFakeData map[string][]string){
+func InitGlobalNetworkSet(c *SyncController, calicoFakeData map[string][]string) {
 
 	var globalNetworkSets = make(map[string]*v3.GlobalNetworkSet)
-	for gns := range calicoFakeData{
+	for gns := range calicoFakeData {
 
 		//Add list of Ips to calico GlobalNetworkSet
-		var globaNetworkSetSpec =  v3.GlobalNetworkSetSpec{Nets: calicoFakeData[gns]}
-		var globalNetworkSet =
-			&v3.GlobalNetworkSet{
-				TypeMeta:   metav1.TypeMeta{},
-				ObjectMeta: metav1.ObjectMeta{},
-				Spec:       globaNetworkSetSpec,
-			}
-		globalNetworkSets[gns] =	globalNetworkSet
+		var globaNetworkSetSpec = v3.GlobalNetworkSetSpec{Nets: calicoFakeData[gns]}
+		var globalNetworkSet = &v3.GlobalNetworkSet{
+			TypeMeta:   metav1.TypeMeta{},
+			ObjectMeta: metav1.ObjectMeta{},
+			Spec:       globaNetworkSetSpec,
+		}
+		globalNetworkSets[gns] = globalNetworkSet
 	}
 
 	//Create calico fake controller
@@ -97,16 +94,16 @@ func InitGlobalNetworkSet(c *SyncController,calicoFakeData map[string][]string){
 
 }
 
-func InitConsulServices(c *SyncController,consulFakeData map[string][]string){
+func InitConsulServices(c *SyncController, consulFakeData map[string][]string) {
 
-	for k, v := range consulFakeData{
+	for k, v := range consulFakeData {
 		var catalog []*capi.CatalogService
-		for _,ip := range v{
+		for _, ip := range v {
 			var node capi.CatalogService
 			node.Address = ip
 			catalog = append(catalog, &node)
 		}
-		c.serviceMap[k]= catalog
+		c.serviceMap[k] = catalog
 	}
 
 }

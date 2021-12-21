@@ -15,10 +15,9 @@ const (
 	defaultTimestampFormat = time.RFC3339
 )
 
-var Category =""
-var Thread =""
-var Context =""
-
+var Category = ""
+var Thread = ""
+var Context = ""
 
 // Formatter implements logrus.Formatter interface.
 type Formatter struct {
@@ -29,7 +28,6 @@ type Formatter struct {
 	// All of fields need to be wrapped inside %% i.e %time% %msg%
 	LogFormat string
 }
-
 
 // Format building log message.
 func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
@@ -65,32 +63,32 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 		}
 	}
 
-	if mapping["thread"] == ""{
+	if mapping["thread"] == "" {
 		output = strings.Replace(output, "%thread%", Thread, 1)
 	}
 
-	if mapping["category"] == ""{
+	if mapping["category"] == "" {
 		output = strings.Replace(output, "%category%", Category, 1)
 	}
 
-	if mapping["context"] == ""{
+	if mapping["context"] == "" {
 		output = strings.Replace(output, "%context%", Context, 1)
 	}
 
 	//removing prefix space, which causes wrong log output
-	output = strings.TrimLeft(output," ")
+	output = strings.TrimLeft(output, " ")
 	return []byte(output), nil
 }
 
-func SeValues(thread string, category string, context string)  {
+func SeValues(thread string, category string, context string) {
 	Thread = thread
 	Category = category
 	Context = context
 }
 
-func LoggerFunction(args... string) *logrus.Entry {
-	if len(args) > 2{
-		return logrus.WithField("thread", args[0]).WithField("context", args[1]).WithField("category",args[2])
+func LoggerFunction(args ...string) *logrus.Entry {
+	if len(args) > 2 {
+		return logrus.WithField("thread", args[0]).WithField("context", args[1]).WithField("category", args[2])
 	}
 
 	pc, file, line, ok := runtime.Caller(1)
@@ -101,7 +99,7 @@ func LoggerFunction(args... string) *logrus.Entry {
 	filename := file[strings.LastIndex(file, "/")+1:] + ":" + strconv.Itoa(line)
 	funcname := runtime.FuncForPC(pc).Name()
 	fn := funcname[strings.LastIndex(funcname, ".")+1:]
-	if len(args) == 1{
+	if len(args) == 1 {
 		return logrus.WithField("thread", args[0]).WithField("context", filename).WithField("category", fn)
 	}
 	return logrus.WithField("context", filename).WithField("category", fn)

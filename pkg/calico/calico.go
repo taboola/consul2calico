@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	logger 					 = log.LoggerFunction
+	logger = log.LoggerFunction
 )
 
 func init() {
@@ -23,9 +23,9 @@ func init() {
 }
 
 type Controller interface {
-	GetNetworkSet(context.Context,string) (*v3.GlobalNetworkSet,error)
-	UpdateNetworkSet(ctx context.Context, netName string, ipsAdd[]string ,
-		ipsDelete[]string,stop chan os.Signal)error
+	GetNetworkSet(context.Context, string) (*v3.GlobalNetworkSet, error)
+	UpdateNetworkSet(ctx context.Context, netName string, ipsAdd []string,
+		ipsDelete []string, stop chan os.Signal) error
 }
 
 type ControllerImpl struct {
@@ -36,17 +36,15 @@ func New(c client3.Interface) *ControllerImpl {
 	return &ControllerImpl{c}
 }
 
-
-
-func (c *ControllerImpl) GetNetworkSet(ctx context.Context,netName string)(*v3.GlobalNetworkSet,error){
+func (c *ControllerImpl) GetNetworkSet(ctx context.Context, netName string) (*v3.GlobalNetworkSet, error) {
 	var net *v3.GlobalNetworkSet
 	var Err error
 	logger().Debugf("Trying to GET GlobalNetworkSet: %v", netName)
-	errAfterRetry := backoff.Retry(func() error{
-		net, Err = c.calicoClient.GlobalNetworkSets().Get(ctx,netName,options.GetOptions{})
-		if Err != nil{
+	errAfterRetry := backoff.Retry(func() error {
+		net, Err = c.calicoClient.GlobalNetworkSets().Get(ctx, netName, options.GetOptions{})
+		if Err != nil {
 			logger().Errorf("Failed to GET GlobalNetworkSet (%v) info from Calico ERROR :%v",
-				netName,Err)
+				netName, Err)
 			return Err
 		}
 		return nil
@@ -54,24 +52,24 @@ func (c *ControllerImpl) GetNetworkSet(ctx context.Context,netName string)(*v3.G
 
 	if errAfterRetry != nil {
 		logger().Errorf("Failed to GET GlobalNetworkSet (%v) info from Calico for few times ERROR :%v",
-			netName,errAfterRetry)
+			netName, errAfterRetry)
 		return nil, errAfterRetry
 	}
-	logger().Debugf("Success to GET GlobalNetworkSet (%v) info from Calico",netName)
-	return net,nil
+	logger().Debugf("Success to GET GlobalNetworkSet (%v) info from Calico", netName)
+	return net, nil
 }
 
-func (c *ControllerImpl) UpdateNetworkSet(ctx context.Context, netName string, ipsAdd[]string ,
-	ipsDelete[]string,stop chan os.Signal)error{
-	logger().Debugf("Updating %v Ips to GlobalNetworkSet: %v",len(ipsAdd)+len(ipsDelete), netName)
+func (c *ControllerImpl) UpdateNetworkSet(ctx context.Context, netName string, ipsAdd []string,
+	ipsDelete []string, stop chan os.Signal) error {
+	logger().Debugf("Updating %v Ips to GlobalNetworkSet: %v", len(ipsAdd)+len(ipsDelete), netName)
 	//Get globalNetworkSet.
-	net,Err := c.GetNetworkSet(ctx,netName)
-	if Err != nil{
-		logger().Errorf("Failed - trying to get GlobalNetworkSet: %v ERROR : %v",netName, Err)
+	net, Err := c.GetNetworkSet(ctx, netName)
+	if Err != nil {
+		logger().Errorf("Failed - trying to get GlobalNetworkSet: %v ERROR : %v", netName, Err)
 		signal.Notify(stop, syscall.SIGTERM)
 	}
 	//Servers to add
-	if len(ipsAdd) > 0{
+	if len(ipsAdd) > 0 {
 		net.Spec.Nets = append(net.Spec.Nets, ipsAdd...)
 	}
 	//Servers to delete
@@ -80,11 +78,11 @@ func (c *ControllerImpl) UpdateNetworkSet(ctx context.Context, netName string, i
 		net.Spec.Nets = l
 	}
 
-	errAfterRetry := backoff.Retry(func() error{
-		_, err := c.calicoClient.GlobalNetworkSets().Update(ctx,net,options.SetOptions{TTL: 0})
-		if err != nil{
+	errAfterRetry := backoff.Retry(func() error {
+		_, err := c.calicoClient.GlobalNetworkSets().Update(ctx, net, options.SetOptions{TTL: 0})
+		if err != nil {
 			logger().Errorf("Failed - trying to UPDATE GlobalNetworkSet(%v) ERROR : %v",
-				net,err)
+				net, err)
 			return err
 		}
 		return nil
@@ -92,7 +90,7 @@ func (c *ControllerImpl) UpdateNetworkSet(ctx context.Context, netName string, i
 
 	if errAfterRetry != nil {
 		logger().Errorf("Failed - trying to UPDATE GlobalNetworkSet(%v) for few times ERROR :%v",
-			net,errAfterRetry)
+			net, errAfterRetry)
 		return errAfterRetry
 	}
 	logger().Debugf("Success - trying to UPDATE GlobalNetworkSet: %v", net)
@@ -100,9 +98,8 @@ func (c *ControllerImpl) UpdateNetworkSet(ctx context.Context, netName string, i
 
 }
 
-
 // GetCalicoClient Returns calico client initialized from ENV
-func GetCalicoClient() (client3.Interface,error){
+func GetCalicoClient() (client3.Interface, error) {
 	var client client3.Interface
 	var calicoErr error
 	logger().Info("Starting to initialize calico client")
@@ -116,9 +113,9 @@ func GetCalicoClient() (client3.Interface,error){
 	}, utils.GetBackOff())
 
 	if errAfterRetry != nil {
-		logger().Errorf("Failed to initialize calico client For few times ERROR : %v",errAfterRetry)
-		return nil,errAfterRetry
+		logger().Errorf("Failed to initialize calico client For few times ERROR : %v", errAfterRetry)
+		return nil, errAfterRetry
 	}
 	logger().Info("Success initialize calico client")
-	return client,nil
+	return client, nil
 }
