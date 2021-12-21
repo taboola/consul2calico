@@ -88,7 +88,7 @@ func GetConsulClient() (*capi.Client, error) {
 	return consulClient, nil
 }
 
-// syncConsulService function will watch consul state on a given service
+// watchConsulService function will watch consul state on a given service
 // Upon every change to the consul service this function will trigger a calico sync
 // and will update the given GlobalNetworkSet
 func watchConsulService(ctx context.Context, mutexCache *sync.RWMutex, consulChange map[string]int, consulSvc string, consulClient *capi.Client,
