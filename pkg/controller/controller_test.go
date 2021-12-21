@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"consul-sync/pkg/utils"
 	"context"
 	v3 "github.com/projectcalico/api/pkg/apis/projectcalico/v3"
+	"github.com/taboola/consul2calico/pkg/utils"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"os"
 	"os/signal"

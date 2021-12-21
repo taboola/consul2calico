@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"consul-sync/pkg/calico"
-	"consul-sync/pkg/consul"
-	"consul-sync/pkg/utils"
 	"context"
 	capi "github.com/hashicorp/consul/api"
 	"github.com/sirupsen/logrus"
+	"github.com/taboola/consul2calico/pkg/calico"
+	"github.com/taboola/consul2calico/pkg/consul"
+	"github.com/taboola/consul2calico/pkg/utils"
 	"os"
 	"os/signal"
 	"sync"

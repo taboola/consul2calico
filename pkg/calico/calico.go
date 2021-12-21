@@ -1,13 +1,13 @@
 package calico
 
 import (
-	"consul-sync/pkg/log"
-	"consul-sync/pkg/utils"
 	"context"
 	"github.com/cenkalti/backoff"
 	v3 "github.com/projectcalico/api/pkg/apis/projectcalico/v3"
 	client3 "github.com/projectcalico/libcalico-go/lib/clientv3"
 	"github.com/projectcalico/libcalico-go/lib/options"
+	"github.com/taboola/consul2calico/pkg/log"
+	"github.com/taboola/consul2calico/pkg/utils"
 	"os/signal"
 	"syscall"
 

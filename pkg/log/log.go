@@ -1,8 +1,8 @@
 package log
 
 import (
-	"consul-sync/pkg/utils"
 	"github.com/sirupsen/logrus"
+	"github.com/taboola/consul2calico/pkg/utils"
 	"time"
 )
 

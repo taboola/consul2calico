@@ -1,12 +1,12 @@
 package main
 
 import (
-	"consul-sync/pkg/calico"
-	"consul-sync/pkg/consul"
-	"consul-sync/pkg/controller"
-	"consul-sync/pkg/log"
-	"consul-sync/pkg/setting"
 	"context"
+	"github.com/taboola/consul2calico/pkg/calico"
+	"github.com/taboola/consul2calico/pkg/consul"
+	"github.com/taboola/consul2calico/pkg/controller"
+	"github.com/taboola/consul2calico/pkg/log"
+	"github.com/taboola/consul2calico/pkg/setting"
 	"os"
 	"os/signal"
 	"sync"

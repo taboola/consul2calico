@@ -1,9 +1,9 @@
 package calico
 
 import (
-	"consul-sync/pkg/utils"
 	"context"
 	v3 "github.com/projectcalico/api/pkg/apis/projectcalico/v3"
+	"github.com/taboola/consul2calico/pkg/utils"
 	"os"
 )
 

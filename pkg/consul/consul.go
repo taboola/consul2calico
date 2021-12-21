@@ -1,11 +1,11 @@
 package consul
 
 import (
-	"consul-sync/pkg/log"
-	"consul-sync/pkg/utils"
 	"context"
 	"github.com/cenkalti/backoff"
 	capi "github.com/hashicorp/consul/api"
+	"github.com/taboola/consul2calico/pkg/log"
+	"github.com/taboola/consul2calico/pkg/utils"
 	"net"
 	"os"
 	"os/signal"

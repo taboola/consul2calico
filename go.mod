@@ -1,4 +1,4 @@
-module consul-sync
+module github.com/taboola/consul2calico
 
 go 1.16
 

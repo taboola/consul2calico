@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"consul-sync/pkg/calico"
-	"consul-sync/pkg/consul"
-	"consul-sync/pkg/log"
 	capi "github.com/hashicorp/consul/api"
 	v3 "github.com/projectcalico/api/pkg/apis/projectcalico/v3"
 	"github.com/sirupsen/logrus"
+	"github.com/taboola/consul2calico/pkg/calico"
+	"github.com/taboola/consul2calico/pkg/consul"
+	"github.com/taboola/consul2calico/pkg/log"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sync"
 	"time"
