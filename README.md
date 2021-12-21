@@ -2,7 +2,7 @@
 
 <center>
 
-<img src="https://git.taboolasyndication.com/projects/ITP/repos/taboola.com/raw/k8s/consul-calico-sync/docs/design/high-lvl.svg?at=refs%2Fheads%2FK8S-825-consul-calico-sync-refactor-ui" width="800" height="600">
+<img src="https://raw.githubusercontent.com/taboola/consul2calico/196fababb3d390a51814a7b0bb76a8f4b977e3f7/docs/design/high-lvl.svg" width="800" height="600">
 </center>
 
 ## Overview
