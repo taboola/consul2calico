@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/taboola/consul2calico)](https://goreportcard.com/report/github.com/taboola/consul2calico)
+
 # Consul Calico Sync
 
 <center>
