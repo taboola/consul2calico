@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app: {{ .Values.name }}
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha1sum | trunc 60  }}
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ .Values.name }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image:  "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{.Values.name}}-env
+          volumeMounts:
+          - name: etcd-cert
+            mountPath: /etc/ssl/certs/consul2calico
+            readOnly: true
+          - name: svc-config-file
+            mountPath: "/etc/consulcalico"
+            readOnly: true
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config-env
+          configMap:
+            name: {{ .Values.name }}-env
+        - name: svc-config-file
+          configMap:
+            name: {{ .Values.name }}-svc-config
+        - name: etcd-cert
+          secret:
+            secretName: etcd-cert
+            items:
+            - key: etcd-ca.crt
+              path: etcd-ca.crt
+            - key: etcd.crt
+              path: etcd.crt
+            - key: etcd.key
+              path: etcd.key

@@ -1,0 +1,101 @@
+# Default values for consul-calico-sync.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+# The name (and tag) of the Docker image for consul2calico sync.
+image:
+  repository: consul_calico_sync
+  pullPolicy: Always
+  tag: 0.0.1
+
+
+# The resource requests (CPU, memory, etc.)
+# for each of the server agents. This should be a YAML map corresponding to a Kubernetes
+# ResourceRequirements (https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#resourcerequirements-v1-core)
+# object. NOTE: The use of a YAML string is deprecated.
+#
+# Example:
+#
+# ```yaml
+# resources:
+#   requests:
+#     memory: '100Mi'
+#     cpu: '100m'
+#   limits:
+#     memory: '100Mi'
+#     cpu: '100m'
+# ```
+#
+# @recurse: false
+# @type: map
+resources:
+  limits:
+    cpu: 500m
+    memory: 612Mi
+  requests:
+    cpu: 500m
+    memory: 612Mi
+
+name: consul-calico-sync
+
+
+# Name of namespace where this deployment will run.
+# @type: string
+namespace: kube-infra
+
+consul_calico_sync_env:
+  # The name of the datacenter that the consul agent should
+  # register as. This can't be changed once the service is up and running.
+  # @type: string
+  CONSUL_DC: dc1
+  # The address of the consul server/ consul agent.
+  # @type: string
+  CONSUL_ADDR: CONSUL_ADDR
+  # Token of consul cluster
+  # @type: string
+  CONSUL_TOKEN: CONSUL_TOKEN
+
+  # Interval for the service to sync all services of consul with calico state .
+  # For example :5m
+  CALICO_SYNC_INTERVAL: 5m
+  # Determine the blocking query time for consul .
+  # If there is no changes from consul , when it will try to sync again . 
+  # This max at 10m.
+  # For example : 5m
+  CONSUL_SYNC_WAIT_TIME: 5m
+  # If a server is not in consul but is in calico GlobalNetworkSet .
+  # How much time since it removed from consul it should stay in calico .
+  # For example : 30m
+  CALICO_REMOVE_GRACE_TIME: 30m
+  # Consul TCP connection timeout .
+  # If the service will not connect with consul the process will fail .
+  # For example : 5s
+  CONSUL_TCP_TIMEOUT: 5s
+  # The default log level to apply to all components which do not otherwise override this setting.
+  # It is recommended to generally not set this below "info" unless actively debugging due to logging verbosity.
+  # One of "debug", "info", "warn", or "error".
+  # @type: string
+  LOG_LEVEL: info
+
+  # ETCD servers endpoints.
+  # @type: string
+  ETCD_ENDPOINTS: https://etcd001:2379,https://etcd002:2379,https://etcd003:2379
+  # ETCD configuration : path to etcd.key,etcd.crt,etcd-ca.crt
+  # @type: string
+  ETCD_KEY_FILE: /etc/ssl/certs/consul2calico/etcd.key
+  ETCD_CERT_FILE: /etc/ssl/certs/consul2calico/etcd.crt
+  ETCD_CA_CERT_FILE: /etc/ssl/certs/consul2calico/etcd-ca.crt
+
+  # File the process will read configuration from .
+  # @type: string
+  SVC_CONFIG_FILE: /etc/consulcalico/svc.yaml
+
+
+# Pair of consul service and GlobalNetworkSet , the process will sync the Ips 
+# of the consul service to the GlobalNetworkSet configured in calico .
+# @type: map
+consul_sync_services:
+  consul-svc-1: global-network-set-1
+  consul-svc-2: global-network-set-2

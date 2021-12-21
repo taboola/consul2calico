@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}-env
+  namespace: {{ .Values.namespace }}
+  labels:
+    heritage: {{ .Release.Service }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app: {{ .Values.name }}
+    release: {{ .Release.Name }}
+  {{- if .Values.environment }}
+    environment: {{ .Values.environment }}
+  {{- end }}
+data:
+  {{- range $key, $val := .Values.consul_calico_sync_env}}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}-svc-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    heritage: {{ .Release.Service }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    app: {{ .Values.name }}
+    release: {{ .Release.Name }}
+  {{- if .Values.environment }}
+    environment: {{ .Values.environment }}
+  {{- end }}
+data:
+  svc.yaml: |-
+    {{- range $key, $val := .Values.consul_sync_services}}
+    {{ $key }}: {{ $val | quote }}
+    {{- end }}
