@@ -7,14 +7,17 @@ import (
 	"os"
 )
 
+// ControllerFake fakes the calico controller
 type ControllerFake struct {
 	GlobalNetworkSets map[string]*v3.GlobalNetworkSet
 }
 
+// GetNetworkSet fakes action of getting a NetworkSet from calico
 func (c *ControllerFake) GetNetworkSet(ctx context.Context, netName string) (*v3.GlobalNetworkSet, error) {
 	return c.GlobalNetworkSets[netName], nil
 }
 
+// UpdateNetworkSet fakes action of updating a NetworkSet in calico
 func (c *ControllerFake) UpdateNetworkSet(ctx context.Context, netName string, ipsAdd []string,
 	ipsDelete []string, stop chan os.Signal) error {
 

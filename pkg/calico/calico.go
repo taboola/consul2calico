@@ -22,20 +22,25 @@ func init() {
 	log.SeValues("calico-controller", "", "")
 }
 
+// Controller defines the interface for a controller
 type Controller interface {
 	GetNetworkSet(context.Context, string) (*v3.GlobalNetworkSet, error)
 	UpdateNetworkSet(ctx context.Context, netName string, ipsAdd []string,
 		ipsDelete []string, stop chan os.Signal) error
 }
 
+// ControllerImpl is used to interact with calico
 type ControllerImpl struct {
 	calicoClient client3.Interface
 }
 
+// New returns new ControllerImpl object
 func New(c client3.Interface) *ControllerImpl {
 	return &ControllerImpl{c}
 }
 
+// GetNetworkSet gets name of GlobalNetworkSet
+// return the GlobalNetworkSet object that storted in calico
 func (c *ControllerImpl) GetNetworkSet(ctx context.Context, netName string) (*v3.GlobalNetworkSet, error) {
 	var net *v3.GlobalNetworkSet
 	var Err error
@@ -59,6 +64,8 @@ func (c *ControllerImpl) GetNetworkSet(ctx context.Context, netName string) (*v3
 	return net, nil
 }
 
+// UpdateNetworkSet gets name of GlobalNetworkSet and 2 lists of Ips (Add , Remove)
+// updates the GlobalNetworkSet in calico
 func (c *ControllerImpl) UpdateNetworkSet(ctx context.Context, netName string, ipsAdd []string,
 	ipsDelete []string, stop chan os.Signal) error {
 	logger().Debugf("Updating %v Ips to GlobalNetworkSet: %v", len(ipsAdd)+len(ipsDelete), netName)
@@ -98,7 +105,7 @@ func (c *ControllerImpl) UpdateNetworkSet(ctx context.Context, netName string, i
 
 }
 
-// GetCalicoClient Returns calico client initialized from ENV
+// GetCalicoClient returns calico client initialized from ENV
 func GetCalicoClient() (client3.Interface, error) {
 	var client client3.Interface
 	var calicoErr error
