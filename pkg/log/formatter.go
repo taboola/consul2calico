@@ -15,8 +15,13 @@ const (
 	defaultTimestampFormat = time.RFC3339
 )
 
+// Category of the logger
 var Category = ""
+
+// Thread of the logger
 var Thread = ""
+
+// Context of the logger
 var Context = ""
 
 // Formatter implements logrus.Formatter interface.
@@ -80,12 +85,14 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 	return []byte(output), nil
 }
 
+// SeValues set given values
 func SeValues(thread string, category string, context string) {
 	Thread = thread
 	Category = category
 	Context = context
 }
 
+// LoggerFunction returns *logrus.Entry with specific structure
 func LoggerFunction(args ...string) *logrus.Entry {
 	if len(args) > 2 {
 		return logrus.WithField("thread", args[0]).WithField("context", args[1]).WithField("category", args[2])

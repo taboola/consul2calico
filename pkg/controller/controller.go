@@ -20,6 +20,8 @@ var (
 	controllerCheckCacheTime, _ = time.ParseDuration(utils.GetEnv("CONTROLLER_CHECK_CACHE_TIME", "1s"))
 )
 
+// SyncController is used to sync data to calico
+// it holds up to date data from consul
 type SyncController struct {
 	calicoC         calico.Controller
 	consulC         consul.Controller
@@ -31,6 +33,7 @@ type SyncController struct {
 	mutexCache      *sync.RWMutex
 }
 
+// New returns new SyncController object
 func New(calicoC calico.Controller, consulC consul.Controller, logger *logrus.Entry, consulChange map[string]int,
 	serviceMap map[string][]*capi.CatalogService, consulCalicoMap map[string]string,
 	mapAction map[string]map[string]time.Time, mutexCache *sync.RWMutex) *SyncController {
@@ -46,6 +49,7 @@ func New(calicoC calico.Controller, consulC consul.Controller, logger *logrus.En
 	}
 }
 
+// Run start 3 processes (Consul watch , RefreshCacheCalico, SyncOnTrigger)
 func (c *SyncController) Run(ctx context.Context, stop chan os.Signal) {
 
 	//start sync consul
@@ -59,6 +63,7 @@ func (c *SyncController) Run(ctx context.Context, stop chan os.Signal) {
 
 }
 
+// RefreshCacheCalico Adds all the consul services to the process cache
 func (c *SyncController) RefreshCacheCalico(stop chan os.Signal) {
 	for {
 		c.logger.Infof("Starting RefreshCacheCalico")
@@ -77,6 +82,8 @@ func (c *SyncController) RefreshCacheCalico(stop chan os.Signal) {
 	}
 }
 
+// SyncOnTrigger will trigger SyncGlobalNetworkSet for any service that has changed in Consul
+// in the controllerCheckCacheTime time period
 func (c *SyncController) SyncOnTrigger(ctx context.Context, stop chan os.Signal) {
 	for {
 		time.Sleep(controllerCheckCacheTime)
@@ -88,6 +95,7 @@ func (c *SyncController) SyncOnTrigger(ctx context.Context, stop chan os.Signal)
 	}
 }
 
+// SyncGlobalNetworkSet will update the list of Ips in calico based on data from Consul
 func (c *SyncController) SyncGlobalNetworkSet(ctx context.Context, consulService string,
 	calicoGNetworkSet string, stop chan os.Signal) {
 
@@ -190,22 +198,26 @@ func (c *SyncController) mapLoopAction(consulService string) ([]string, []string
 
 }
 
+// GetServicesChanged returns list of services that changed in consul
 func (c *SyncController) GetServicesChanged() map[string]int {
 	return c.consulChange
 }
 
+// DeleteCache removes consul service from process cache
 func (c *SyncController) DeleteCache(consulService string) {
 	c.mutexCache.Lock()
 	delete(c.consulChange, consulService)
 	c.mutexCache.Unlock()
 }
 
+// AddCache adds consul service to process cache
 func (c *SyncController) AddCache(consulService string) {
 	c.mutexCache.Lock()
 	c.consulChange[consulService] = 1
 	c.mutexCache.Unlock()
 }
 
+// GetCatalogService returns the Catalog of the service in consul
 func (c *SyncController) GetCatalogService(consulService string) []*capi.CatalogService {
 	return c.serviceMap[consulService]
 }

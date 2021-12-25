@@ -27,22 +27,25 @@ func init() {
 	log.SeValues("consul-controller", "", "")
 }
 
+// Controller defines the interface for a controller
 type Controller interface {
 	Watch(ctx context.Context, mutexCache *sync.RWMutex, consulChange map[string]int,
 		consulCalico map[string]string, serviceMap map[string][]*capi.CatalogService, stop chan os.Signal)
 }
 
+// ControllerImpl is used to interact with consul
 type ControllerImpl struct {
 	consulClient *capi.Client
 }
 
+// New returns new ControllerImpl object
 func New(c *capi.Client) *ControllerImpl {
 	return &ControllerImpl{
 		c,
 	}
 }
 
-// GetConsulClient will return consul client .
+// GetConsulClient will return consul client
 func GetConsulClient() (*capi.Client, error) {
 	//Variables that define behavior of consul client
 	defConfig := capi.DefaultConfig()
@@ -89,7 +92,7 @@ func GetConsulClient() (*capi.Client, error) {
 }
 
 // watchConsulService function will watch consul state on a given service
-// Upon every change to the consul service this function will trigger a calico sync
+// upon every change to the consul service this function will trigger a calico sync
 // and will update the given GlobalNetworkSet
 func watchConsulService(ctx context.Context, mutexCache *sync.RWMutex, consulChange map[string]int, consulSvc string, consulClient *capi.Client,
 	serviceMap map[string][]*capi.CatalogService, stop chan os.Signal) {
@@ -147,7 +150,7 @@ func watchConsulService(ctx context.Context, mutexCache *sync.RWMutex, consulCha
 
 }
 
-// Watch  Gets a list of consul services and runs a watch for each consul service.
+// Watch gets a list of consul services and runs a watch for each consul service
 func (c *ControllerImpl) Watch(ctx context.Context, mutexCache *sync.RWMutex, consulChange map[string]int,
 	consulCalico map[string]string, serviceMap map[string][]*capi.CatalogService, stop chan os.Signal) {
 	for consulService := range consulCalico {
