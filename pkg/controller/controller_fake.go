@@ -23,6 +23,7 @@ func init() {
 	log.SeValues("FakeController", "", "")
 }
 
+// SyncControllerFake fakes the sync controller.
 type SyncControllerFake struct {
 	calicoC         calico.Controller
 	consulC         consul.Controller
@@ -34,6 +35,7 @@ type SyncControllerFake struct {
 	mutexCache      *sync.RWMutex
 }
 
+// NewFakeController returns new fake SyncController object
 func NewFakeController(consulCalicoConf map[string]string) *SyncController {
 
 	var consulChange = make(map[string]int)
@@ -68,6 +70,7 @@ func NewFakeController(consulCalicoConf map[string]string) *SyncController {
 	}
 }
 
+// InitGlobalNetworkSet Initialize fake calico data into the controller
 func InitGlobalNetworkSet(c *SyncController, calicoFakeData map[string][]string) {
 
 	var globalNetworkSets = make(map[string]*v3.GlobalNetworkSet)
@@ -94,6 +97,7 @@ func InitGlobalNetworkSet(c *SyncController, calicoFakeData map[string][]string)
 
 }
 
+// InitConsulServices Initialize fake consul data into the controller
 func InitConsulServices(c *SyncController, consulFakeData map[string][]string) {
 
 	for k, v := range consulFakeData {

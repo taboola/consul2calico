@@ -22,8 +22,7 @@ func GetEnv(key, defaultValue string) string {
 	return value
 }
 
-// CompareSlice
-// This function will return 2 slices with give 2 slices a,b
+// CompareSlice will return 2 slices with give 2 slices a,b
 // slice ra : elements that exist in a and NOT in b
 // slice rb : elements that exist in b and NOT in a
 func CompareSlice(a []string, b []string) ([]string, []string) {

@@ -9,12 +9,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//global settings
-
+// ServiceMap holds the full Catalog of the service in consul
 var ServiceMap = make(map[string][]*capi.CatalogService)
+
+// ConsulCalicoMap mapping of consul service and a matched GlobalNetworkSet
 var ConsulCalicoMap = make(map[string]string)
+
+// MapAction is a map of Ip addresses that needs to be deleted or added to Calico
 var MapAction = make(map[string]map[string]time.Time)
 
+// UpdateGlobalParams updates parameters based on given yaml file
 func UpdateGlobalParams(path string) {
 
 	yfile, err := ioutil.ReadFile(path)
