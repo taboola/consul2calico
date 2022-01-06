@@ -85,9 +85,9 @@ func GetConsulClient() (*capi.Client, error) {
 	if err != nil {
 		logger().Errorf("Failed to initialize consul client 3 times ERROR : %v", err)
 		return nil, err
-	} else {
-		logger().Info("Success to initialize consul client")
 	}
+
+	logger().Info("Success to initialize consul client")
 	return consulClient, nil
 }
 
